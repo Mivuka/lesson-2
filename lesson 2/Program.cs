@@ -1,54 +1,28 @@
 ﻿
-string ask(string i)
+string AskInfo(string question, Func<string, bool> validator)
 {
-    Console.WriteLine($"Please, enter your {i}");
+    Console.WriteLine($"Please, enter your {question}");
     var info = Console.ReadLine();
-    if (isWord(info))
+    if (validator(info))
     {
-        return $"{i}: {info}\n";
+        return $"{question}: {info}\n";
     }
     else
     {
         Console.WriteLine("Please, enter the valid info");
-        return ask(i);
+        return AskInfo(question, validator);
     }
-
 }
 
-bool isWord(string s)
+bool IsWord(string s)
 {
-    foreach (char c in s)
-    {
-        if (!Char.IsLetter(c))
-            return false;
-    }
-    return true;
+    return s.All(Char.IsLetter);
 }
 
-string askAge(string i)
+bool IsNumber(string s)
 {
-    Console.WriteLine($"Please, enter your {i}");
-    var info = Console.ReadLine();
-    if (isNumber(info))
-    {
-        return $"{i}: {info}\n";
-    }
-    else
-    {
-        Console.WriteLine("Please, enter the valid info");
-        return askAge(i);
-    }
-
+    return !(!int.TryParse(s, out var number) || number > 100 || number < 1);
 }
 
-bool isNumber(string s)
-{
-    foreach (char c in s)
-    {
-        if (!int.TryParse(s, out var number) || number > 100 || number < 1)
-            return false;
-    }
-    return true;
-}
-
-Console.WriteLine("\n" + ask("name") + ask("surname") + askAge("age") + ask("hobby"));
+Console.WriteLine("\n" + AskInfo("name", IsWord) + AskInfo("surname", IsWord)
+    + AskInfo("age", IsNumber) + AskInfo("hobby", IsWord));
